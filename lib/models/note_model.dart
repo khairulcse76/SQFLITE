@@ -7,10 +7,10 @@ class NoteModel{
    late int _priority;
 
 
-   NoteModel(this._title, this._date, this._priority,[this._description=""]);
+   NoteModel(this._title, this._date, this._priority,this._description);
 
   NoteModel.withID(
-      this._id, this._title, this._date, this._priority,[this._description=""]);
+      this._id, this._title, this._date, this._priority,this._description);
 
 
 
@@ -64,7 +64,7 @@ return map;
     _id=map['id'];
     _title=map['title'];
     _description=map['description'];
-    _priority=map['priority'];
+    _priority = map['priority'] != null ? int.parse(map['priority']) : 0;
     _date = map['date'] ?? "";;
 }
 

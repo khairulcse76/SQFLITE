@@ -35,13 +35,20 @@ var notesDatabase = await openDatabase(path, version:1, onCreate:_createDb);
 return notesDatabase;
 }
 
-void _createDb(Database db, int newVersion) async{
-    var IDType = "INTEGER pRIMARY KEY AUTOINCREMENT";
-    var TextType = "Text";
+  void _createDb(Database db, int newVersion) async {
+    var IDType = "INTEGER";
+    var TextType = "TEXT";
 
-    await db.execute('CREATE TABLE $noteTable ($colID $IDType, $colTitle $TextType, '
-        '$colDescription $TextType, $colPriority $TextType, $colDate $TextType');
-}
+    await db.execute(
+      'CREATE TABLE $noteTable ('
+          '$colID $IDType PRIMARY KEY AUTOINCREMENT, '
+          '$colTitle $TextType, '
+          '$colDescription $TextType, '
+          '$colPriority $TextType, '
+          '$colDate $TextType)',
+    );
+  }
+
 
 
 //FAtch Operation: Get all note objects from database
@@ -49,9 +56,8 @@ Future<List> getNoteMapList() async{
     Database? db = await database;
     //var result = await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC');
     var result = await db!.query(noteTable, orderBy: '$colPriority ASC');
-    return result;
+    return result.map((map) => NoteModel.formMapObject(map)).toList();
 }
-
 
 //Insert Operation: Insert a Note object to database
   Future<int> insertNote(NoteModel note) async{
@@ -83,5 +89,18 @@ Future dbClose()async{
     Database? db = await database;
     db!.close();
 }
+
+
+//Get the "MAP LIST" LIST<MAP> and Convert it to Note List
+  Future<List<NoteModel>> getNoteList() async{
+    var noteMapLIst = await getNoteMapList();
+    int count = noteMapLIst.length;
+    List<NoteModel> noteList = [];
+
+    for(int i=0; i<count; i++){
+      noteList.add(NoteModel.formMapObject(noteMapLIst[i]));
+    }
+    return noteList;
+  }
 
 }//Database Helper Close()
